@@ -499,4 +499,4 @@ const PROTECTED_HTML = `
 <a href="https://www.mediafire.com/file/s4x2eu2zdzsnsmy/AM_%2528wxht%2529_-_common.zip/file" target="_blank" class="link-card">بكج جنوط + كفرات ٢</a>
 <a href="https://www.mediafire.com/file/uun6evo1vkl9911/WSCX_Dream_Engines_Pack_Full.zip/file" target="_blank" class="link-card">تجميع المكاين</a>
 <a href="https://www.mediafire.com/file/6uhvj8bjz2fi5n9/pgp_engine_pack_%2528AAM%2529_2.zip/file" target="_blank" class="link-card">PGP مكاين</a>
-<a href="/logout" style="color: #ff7b72; font-weight:
+
