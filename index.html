@@ -38,3 +38,162 @@
         padding-bottom: 15px;
         margin-bottom: 20px;
         text-align: center;
+    }
+    .title-bar h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 22px;
+        letter-spacing: 1px;
+    }
+    .title-bar p {
+        margin: 5px 0 0 0;
+        font-size: 12px;
+        color: #718096;
+    }
+    .paste-box {
+        background-color: #0d1117;
+        border: 1px solid #21262d;
+        border-radius: 6px;
+        padding: 20px;
+        font-family: monospace, 'Courier New', Courier;
+        font-size: 14px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        color: #c9d1d9;
+    }
+    .paste-box a, .paste-box a.link-card {
+        display: block;
+        color: #58a6ff;
+        text-decoration: none;
+        border-bottom: 1px dashed #21262d;
+        padding: 6px 0;
+        font-weight: bold;
+    }
+    .paste-box a:hover { color: #1f6feb; }
+    .warning { color: #ff7b72; font-weight: bold; }
+    .section-header {
+        color: #aff5b4;
+        font-size: 16px;
+        margin-top: 20px;
+        margin-bottom: 8px;
+        font-weight: bold;
+        display: block;
+        border-bottom: 1px solid #21262d;
+        padding-bottom: 5px;
+    }
+    .login-form { text-align: center; }
+    input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        margin: 15px 0;
+        border: 1px solid #30363d;
+        background: #0d1117;
+        color: #fff;
+        border-radius: 6px;
+        box-sizing: border-box;
+        text-align: center;
+        font-size: 16px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        background-color: #238636;
+        color: #ffffff;
+        border: 1px solid #2ea44f;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    button:hover { background-color: #2ea44f; }
+    .error { color: #f85149; text-align: center; margin-bottom: 15px; font-weight: bold; display:none; }
+    .logout-btn {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #f85149;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="logo-wrap">
+        <img src="/IMG_3434.jpeg" alt="N7L Store Logo">
+    </div>
+    <div class="title-bar">
+        <h2>N7L STORE</h2>
+    </div>
+
+    <p id="errorMsg" class="error"></p>
+
+    <div id="loginForm" class="login-form">
+        <p style="font-size:14px; color:#8b949e;">أدخل آيدي التليجرام الخاص بك للدخول</p>
+        <input type="text" id="userIdInput" placeholder="مثال: 0000000000" autocomplete="off">
+        <button onclick="checkAccess()">دخول</button>
+    </div>
+
+    <div id="content" style="display:none;">
+        <div id="protectedContent" class="paste-box"></div>
+        <a class="logout-btn" onclick="logout()">[ خروج ]</a>
+    </div>
+</div>
+
+<script>
+function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+}
+function hideError() {
+    document.getElementById('errorMsg').style.display = 'none';
+}
+
+async function checkAccess() {
+    hideError();
+    const userId = document.getElementById('userIdInput').value.trim();
+    if (!userId) {
+        showError('اكتب آيديك أولاً.');
+        return;
+    }
+    try {
+        const res = await fetch('/api/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        if (data.ok) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            document.getElementById('protectedContent').innerHTML = data.html;
+            sessionStorage.setItem('n7l_uid', userId);
+        } else {
+            showError(data.error || 'آيدي غير صحيح.');
+        }
+    } catch (e) {
+        showError('حدث خطأ، حاول مرة أخرى.');
+    }
+}
+
+function logout() {
+    sessionStorage.removeItem('n7l_uid');
+    document.getElementById('content').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('userIdInput').value = '';
+}
+
+window.onload = function() {
+    const saved = sessionStorage.getItem('n7l_uid');
+    if (saved) {
+        document.getElementById('userIdInput').value = saved;
+        checkAccess();
+    }
+};
+</script>
+</body>
+</html>
