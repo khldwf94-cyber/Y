@@ -374,6 +374,7 @@ const PROTECTED_HTML = `
 <a href="https://www.mediafire.com/file/ddm9rpy9dpxxqeg/Echo_Team_cruze_2026.zip/file" target="_blank" class="link-card">كروز ٢٠٢٦-٢</a>
 <a href="https://www.mediafire.com/file/qp9topoupr1nfwn/Alve_Team_Accord_08_-_12.zip/file" target="_blank" class="link-card">اكورد ٢٠٠٨-٢٠١٢</a>
 <a href="https://www.mediafire.com/file/le19d9o52e8gjpi/M7_CHARGER13.zip/file" target="_blank" class="link-card">تشارجر ٢٠١٣-٢</a>
+<a href="https://www.mediafire.com/file_premium/8n7hkd6w5ytw7po/305ADN_Kia_Cadenza_2015_2.zip/file" target="_blank" class="link-card"> كدينزا ٢٠١٦</a>
 
 <span class="section-header">المابات 🗺️</span>
 <a href="https://www.dropbox.com/scl/fi/gshi21vvm75tlrmhm5sd6/Dayiri-Al-Tishalih-Al-Qassim.zip?rlkey=uadv0ju0oo0aci6o3t6ybfhiq&st=pfdsz9ll&dl=1" target="_blank" class="link-card">ماب الدايري  خويلد</a>
