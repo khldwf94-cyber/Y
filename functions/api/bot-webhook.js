@@ -18,4 +18,17 @@ export async function onRequestPost(context) {
 
     const welcomeText = `نورت متجر N7L\n\nالاسم : ${fullName}\nاليوزر : ${username}\nالايدي : ${userId}`;
 
-    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: welcomeText
+      })
+    });
+
+    return new Response("ok", { status: 200 });
+  } catch (e) {
+    return new Response("error", { status: 200 });
+  }
+}
