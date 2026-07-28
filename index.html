@@ -45,11 +45,6 @@
         font-size: 22px;
         letter-spacing: 1px;
     }
-    .title-bar p {
-        margin: 5px 0 0 0;
-        font-size: 12px;
-        color: #718096;
-    }
     .paste-box {
         background-color: #0d1117;
         border: 1px solid #21262d;
@@ -137,6 +132,12 @@
         <button onclick="checkAccess()">دخول</button>
     </div>
 
+    <div id="otpForm" class="login-form" style="display:none;">
+        <p style="font-size:14px; color:#8b949e;">تم إرسال كود التحقق لك عبر البوت، اكتبه هنا</p>
+        <input type="text" id="otpInput" placeholder="اكتب الكود المكون من 6 أرقام" autocomplete="off">
+        <button onclick="confirmOtp()">تأكيد</button>
+    </div>
+
     <div id="content" style="display:none;">
         <div id="protectedContent" class="paste-box"></div>
         <a class="logout-btn" onclick="logout()">[ خروج ]</a>
@@ -144,6 +145,8 @@
 </div>
 
 <script>
+let currentUserId = "";
+
 function showError(msg) {
     const el = document.getElementById('errorMsg');
     el.textContent = msg;
@@ -167,11 +170,10 @@ async function checkAccess() {
             body: JSON.stringify({ userId })
         });
         const data = await res.json();
-        if (data.ok) {
+        if (data.ok && data.needOtp) {
+            currentUserId = userId;
             document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('content').style.display = 'block';
-            document.getElementById('protectedContent').innerHTML = data.html;
-            sessionStorage.setItem('n7l_uid', userId);
+            document.getElementById('otpForm').style.display = 'block';
         } else {
             showError(data.error || 'آيدي غير صحيح.');
         }
@@ -180,20 +182,40 @@ async function checkAccess() {
     }
 }
 
-function logout() {
-    sessionStorage.removeItem('n7l_uid');
-    document.getElementById('content').style.display = 'none';
-    document.getElementById('loginForm').style.display = 'block';
-    document.getElementById('userIdInput').value = '';
+async function confirmOtp() {
+    hideError();
+    const code = document.getElementById('otpInput').value.trim();
+    if (!code) {
+        showError('اكتب الكود المرسل لك.');
+        return;
+    }
+    try {
+        const res = await fetch('/api/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: currentUserId, code })
+        });
+        const data = await res.json();
+        if (data.ok) {
+            document.getElementById('otpForm').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            document.getElementById('protectedContent').innerHTML = data.html;
+        } else {
+            showError(data.error || 'الكود غير صحيح.');
+        }
+    } catch (e) {
+        showError('حدث خطأ، حاول مرة أخرى.');
+    }
 }
 
-window.onload = function() {
-    const saved = sessionStorage.getItem('n7l_uid');
-    if (saved) {
-        document.getElementById('userIdInput').value = saved;
-        checkAccess();
-    }
-};
+function logout() {
+    currentUserId = "";
+    document.getElementById('content').style.display = 'none';
+    document.getElementById('otpForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+    document.getElementById('userIdInput').value = '';
+    document.getElementById('otpInput').value = '';
+}
 </script>
 </body>
 </html>
