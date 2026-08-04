@@ -113,6 +113,54 @@
         font-weight: bold;
         cursor: pointer;
     }
+    #searchFab {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background-color: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1000;
+    }
+    #searchFab svg {
+        width: 20px;
+        height: 20px;
+        stroke: #ffffff;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    }
+    #searchOverlay {
+        position: fixed;
+        top: 65px;
+        left: 20px;
+        right: 20px;
+        max-width: 550px;
+        margin: 0 auto;
+        background-color: #151a21;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 12px;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    }
+    #searchOverlay.active { display: block; }
+    #searchOverlay input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #30363d;
+        background: #0d1117;
+        color: #fff;
+        border-radius: 6px;
+        box-sizing: border-box;
+        text-align: right;
+        font-size: 14px;
+    }
 </style>
 </head>
 <body>
@@ -139,6 +187,15 @@
     </div>
 
     <div id="content" style="display:none;">
+        <div id="searchFab" onclick="toggleSearch()">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </div>
+        <div id="searchOverlay">
+            <input type="text" id="searchInput" placeholder="ابحث عن سيارة أو ماب..." oninput="filterLinks()">
+        </div>
         <div id="protectedContent" class="paste-box"></div>
         <a class="logout-btn" onclick="logout()">[ خروج ]</a>
     </div>
@@ -206,6 +263,36 @@ async function confirmOtp() {
     } catch (e) {
         showError('حدث خطأ، حاول مرة أخرى.');
     }
+}
+
+function toggleSearch() {
+    document.getElementById('searchOverlay').classList.toggle('active');
+    if (document.getElementById('searchOverlay').classList.contains('active')) {
+        document.getElementById('searchInput').focus();
+    }
+}
+
+function filterLinks() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const links = document.querySelectorAll('#protectedContent a.link-card');
+    const headers = document.querySelectorAll('#protectedContent .section-header');
+
+    links.forEach(link => {
+        const text = link.textContent.toLowerCase();
+        link.style.display = text.includes(query) ? 'block' : 'none';
+    });
+
+    headers.forEach(header => {
+        let next = header.nextElementSibling;
+        let hasVisible = false;
+        while (next && !next.classList.contains('section-header')) {
+            if (next.classList.contains('link-card') && next.style.display !== 'none') {
+                hasVisible = true;
+            }
+            next = next.nextElementSibling;
+        }
+        header.style.display = hasVisible ? 'block' : 'none';
+    });
 }
 
 function logout() {
