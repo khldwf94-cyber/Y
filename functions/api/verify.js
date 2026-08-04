@@ -5,7 +5,6 @@ export async function onRequestPost(context) {
 
     const ALLOWED_IDS = [
       "5432340735",
-      "1833104668",
       "5886085839",
     ];
 
