@@ -148,6 +148,8 @@
         display: none;
         z-index: 1000;
         box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        max-height: 75vh;
+        overflow-y: auto;
     }
     #searchOverlay.active { display: block; }
     #searchOverlay input {
@@ -160,6 +162,24 @@
         box-sizing: border-box;
         text-align: right;
         font-size: 14px;
+    }
+    #searchResults {
+        margin-top: 10px;
+    }
+    #searchResults a.link-card {
+        display: block;
+        color: #58a6ff;
+        text-decoration: none;
+        border-bottom: 1px dashed #21262d;
+        padding: 8px 0;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    #searchResults .no-result {
+        color: #8b949e;
+        font-size: 13px;
+        text-align: center;
+        padding: 10px 0;
     }
 </style>
 </head>
@@ -195,6 +215,7 @@
         </div>
         <div id="searchOverlay">
             <input type="text" id="searchInput" placeholder="ابحث عن سيارة أو ماب..." oninput="filterLinks()">
+            <div id="searchResults"></div>
         </div>
         <div id="protectedContent" class="paste-box"></div>
         <a class="logout-btn" onclick="logout()">[ خروج ]</a>
@@ -274,25 +295,31 @@ function toggleSearch() {
 
 function filterLinks() {
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const resultsBox = document.getElementById('searchResults');
+    resultsBox.innerHTML = '';
+
+    if (!query) {
+        return;
+    }
+
     const links = document.querySelectorAll('#protectedContent a.link-card');
-    const headers = document.querySelectorAll('#protectedContent .section-header');
+    let count = 0;
 
     links.forEach(link => {
         const text = link.textContent.toLowerCase();
-        link.style.display = text.includes(query) ? 'block' : 'none';
+        if (text.includes(query)) {
+            const clone = link.cloneNode(true);
+            resultsBox.appendChild(clone);
+            count++;
+        }
     });
 
-    headers.forEach(header => {
-        let next = header.nextElementSibling;
-        let hasVisible = false;
-        while (next && !next.classList.contains('section-header')) {
-            if (next.classList.contains('link-card') && next.style.display !== 'none') {
-                hasVisible = true;
-            }
-            next = next.nextElementSibling;
-        }
-        header.style.display = hasVisible ? 'block' : 'none';
-    });
+    if (count === 0) {
+        const noResult = document.createElement('div');
+        noResult.className = 'no-result';
+        noResult.textContent = 'لا توجد نتائج مطابقة.';
+        resultsBox.appendChild(noResult);
+    }
 }
 
 function logout() {
