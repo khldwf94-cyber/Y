@@ -148,8 +148,6 @@
         display: none;
         z-index: 1000;
         box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-        max-height: 75vh;
-        overflow-y: auto;
     }
     #searchOverlay.active { display: block; }
     #searchOverlay input {
@@ -163,10 +161,21 @@
         text-align: right;
         font-size: 14px;
     }
-    #searchResults {
-        margin-top: 10px;
+    #searchResultsView {
+        display: none;
+        background-color: #0d1117;
+        border: 1px solid #21262d;
+        border-radius: 6px;
+        padding: 20px;
     }
-    #searchResults a.link-card {
+    #searchResultsView h3 {
+        color: #aff5b4;
+        font-size: 16px;
+        margin: 0 0 12px 0;
+        border-bottom: 1px solid #21262d;
+        padding-bottom: 8px;
+    }
+    #searchResultsList a.link-card {
         display: block;
         color: #58a6ff;
         text-decoration: none;
@@ -175,7 +184,7 @@
         font-weight: bold;
         font-size: 14px;
     }
-    #searchResults .no-result {
+    #searchResultsList .no-result {
         color: #8b949e;
         font-size: 13px;
         text-align: center;
@@ -215,7 +224,6 @@
         </div>
         <div id="searchOverlay">
             <input type="text" id="searchInput" placeholder="ابحث عن سيارة أو ماب..." oninput="filterLinks()">
-            <div id="searchResults"></div>
         </div>
         <div id="protectedContent" class="paste-box"></div>
         <a class="logout-btn" onclick="logout()">[ خروج ]</a>
@@ -278,6 +286,7 @@ async function confirmOtp() {
             document.getElementById('otpForm').style.display = 'none';
             document.getElementById('content').style.display = 'block';
             document.getElementById('protectedContent').innerHTML = data.html;
+            insertSearchResultsView();
         } else {
             showError(data.error || 'الكود غير صحيح.');
         }
@@ -293,18 +302,39 @@ function toggleSearch() {
     }
 }
 
+function insertSearchResultsView() {
+    const container = document.getElementById('protectedContent');
+    const paragraphs = container.querySelectorAll('p');
+    if (paragraphs.length < 2) return;
+
+    const view = document.createElement('div');
+    view.id = 'searchResultsView';
+    view.innerHTML = '<h3>نتائج البحث</h3><div id="searchResultsList"></div>';
+
+    paragraphs[1].insertAdjacentElement('afterend', view);
+}
+
 function filterLinks() {
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    const resultsBox = document.getElementById('searchResults');
+    const resultsBox = document.getElementById('searchResultsList');
+    const resultsView = document.getElementById('searchResultsView');
+    const links = document.querySelectorAll('#protectedContent a.link-card');
+    const headers = document.querySelectorAll('#protectedContent .section-header');
+
+    if (!resultsBox || !resultsView) return;
     resultsBox.innerHTML = '';
 
     if (!query) {
+        resultsView.style.display = 'none';
+        links.forEach(link => link.style.display = 'block');
+        headers.forEach(header => header.style.display = 'block');
         return;
     }
 
-    const links = document.querySelectorAll('#protectedContent a.link-card');
-    let count = 0;
+    links.forEach(link => link.style.display = 'none');
+    headers.forEach(header => header.style.display = 'none');
 
+    let count = 0;
     links.forEach(link => {
         const text = link.textContent.toLowerCase();
         if (text.includes(query)) {
@@ -320,6 +350,8 @@ function filterLinks() {
         noResult.textContent = 'لا توجد نتائج مطابقة.';
         resultsBox.appendChild(noResult);
     }
+
+    resultsView.style.display = 'block';
 }
 
 function logout() {
