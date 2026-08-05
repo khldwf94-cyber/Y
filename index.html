@@ -318,8 +318,8 @@ function filterLinks() {
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
     const resultsBox = document.getElementById('searchResultsList');
     const resultsView = document.getElementById('searchResultsView');
-    const links = document.querySelectorAll('#protectedContent a.link-card');
-    const headers = document.querySelectorAll('#protectedContent .section-header');
+    const links = document.querySelectorAll('#protectedContent > a.link-card');
+    const headers = document.querySelectorAll('#protectedContent > .section-header');
 
     if (!resultsBox || !resultsView) return;
     resultsBox.innerHTML = '';
