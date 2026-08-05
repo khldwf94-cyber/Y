@@ -339,6 +339,7 @@ function filterLinks() {
         const text = link.textContent.toLowerCase();
         if (text.includes(query)) {
             const clone = link.cloneNode(true);
+            clone.style.display = 'block';
             resultsBox.appendChild(clone);
             count++;
         }
