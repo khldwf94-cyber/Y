@@ -6,6 +6,7 @@ export async function onRequestPost(context) {
     const ALLOWED_IDS = [
       "5432340735",
       "5886085839",
+      "5664645331",
     ];
 
     if (!userId || !ALLOWED_IDS.includes(userId)) {
