@@ -7,7 +7,6 @@ export async function onRequestPost(context) {
       "5432340735",
       "5886085839",
       "5664645331",
-      "7230038965",
     ];
 
     if (!userId || !ALLOWED_IDS.includes(userId)) {
